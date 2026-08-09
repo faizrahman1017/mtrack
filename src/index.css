@@ -22,6 +22,31 @@
   --color-gold-soft: #FBF0DF;
 }
 
+.dark {
+  --color-bg: #14181A;
+  --color-surface: #1C2124;
+  --color-surface-2: #262B2E;
+  --color-ink: #EEEEEA;
+  --color-muted: #939A93;
+  --color-border: #2E3437;
+  --color-accent: #22A187;
+  --color-accent-ink: #4CC2A6;
+  --color-accent-soft: #17332C;
+  --color-income: #3BBB84;
+  --color-income-soft: #17332A;
+  --color-expense: #E3806A;
+  --color-expense-soft: #3A2019;
+  --color-gold: #EFB56C;
+  --color-gold-soft: #33280F;
+}
+
+html {
+  color-scheme: light;
+}
+html.dark {
+  color-scheme: dark;
+}
+
 html, body, #root {
   height: 100%;
 }
@@ -32,6 +57,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 * {

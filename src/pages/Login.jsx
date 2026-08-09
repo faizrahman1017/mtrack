@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { useTheme } from '../hooks/useTheme'
 
 export default function Login() {
   const { signIn } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
@@ -24,7 +26,23 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center px-6 bg-bg">
+    <div className="min-h-dvh flex items-center justify-center px-6 bg-bg relative">
+      <button
+        onClick={toggleTheme}
+        title={theme === 'dark' ? 'Mode terang' : 'Mode gelap'}
+        className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-lg text-muted transition hover:bg-surface hover:text-ink"
+      >
+        {theme === 'dark' ? (
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M12 2.5v2M12 19.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2.5 12h2M19.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        ) : (
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </button>
       <div className="w-full max-w-sm">
         <div className="mb-10 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent">
@@ -32,7 +50,7 @@ export default function Login() {
               <path d="M4 16 L10 8 L14 12 L20 5" stroke="#DE9F4E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="font-display text-3xl text-ink">MTrack</h1>
+          <h1 className="font-display text-3xl text-ink">Duitin</h1>
           <p className="mt-1.5 text-sm text-muted">Masuk untuk lanjut catat keuanganmu</p>
         </div>
 

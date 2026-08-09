@@ -8,6 +8,7 @@ import {
   weeklyDailySeries, monthlyDailySeries, yearlyMonthlySeries,
 } from '../lib/reportUtils'
 import { formatCompactRupiah, formatMonthYear, formatRupiah } from '../lib/format'
+import { useTheme } from '../hooks/useTheme'
 
 const MODES = [
   { key: 'week', label: 'Mingguan' },
@@ -15,7 +16,24 @@ const MODES = [
   { key: 'year', label: 'Tahunan' },
 ]
 
-const PIE_COLORS = ['#AE4630', '#DE9F4E', '#0F6E5E', '#8AA69C', '#C9A26B', '#6E756B']
+const CHART_PALETTE = {
+  light: {
+    grid: '#E6E4DD',
+    tick: '#6E756B',
+    cursor: '#F0EFEA',
+    income: '#1F8A5F',
+    expense: '#AE4630',
+    pie: ['#AE4630', '#DE9F4E', '#0F6E5E', '#8AA69C', '#C9A26B', '#6E756B'],
+  },
+  dark: {
+    grid: '#2E3437',
+    tick: '#939A93',
+    cursor: '#262B2E',
+    income: '#3BBB84',
+    expense: '#E3806A',
+    pie: ['#E3806A', '#EFB56C', '#22A187', '#6F8079', '#C9A26B', '#939A93'],
+  },
+}
 
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
@@ -32,6 +50,8 @@ function ChartTooltip({ active, payload, label }) {
 }
 
 export default function LaporanPage({ transactions }) {
+  const { theme } = useTheme()
+  const colors = CHART_PALETTE[theme]
   const [mode, setMode] = useState('week')
   const [anchor, setAnchor] = useState(new Date())
 
@@ -131,24 +151,24 @@ export default function LaporanPage({ transactions }) {
         <p className="mb-3 text-sm font-semibold text-ink">Arus kas per {mode === 'week' ? 'hari' : mode === 'month' ? 'tanggal' : 'bulan'}</p>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={series} margin={chartMargin} barGap={2}>
-            <CartesianGrid vertical={false} stroke="#E6E4DD" />
+            <CartesianGrid vertical={false} stroke={colors.grid} />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 10, fill: '#6E756B' }}
-              axisLine={{ stroke: '#E6E4DD' }}
+              tick={{ fontSize: 10, fill: colors.tick }}
+              axisLine={{ stroke: colors.grid }}
               tickLine={false}
               interval={mode === 'month' ? 4 : 0}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: '#6E756B' }}
+              tick={{ fontSize: 10, fill: colors.tick }}
               axisLine={false}
               tickLine={false}
               tickFormatter={formatCompactRupiah}
               width={44}
             />
-            <Tooltip content={<ChartTooltip />} cursor={{ fill: '#F0EFEA' }} />
-            <Bar dataKey="income" name="Pemasukan" fill="#1F8A5F" radius={[3, 3, 0, 0]} maxBarSize={mode === 'month' ? 6 : 14} />
-            <Bar dataKey="expense" name="Pengeluaran" fill="#AE4630" radius={[3, 3, 0, 0]} maxBarSize={mode === 'month' ? 6 : 14} />
+            <Tooltip content={<ChartTooltip />} cursor={{ fill: colors.cursor }} />
+            <Bar dataKey="income" name="Pemasukan" fill={colors.income} radius={[3, 3, 0, 0]} maxBarSize={mode === 'month' ? 6 : 14} />
+            <Bar dataKey="expense" name="Pengeluaran" fill={colors.expense} radius={[3, 3, 0, 0]} maxBarSize={mode === 'month' ? 6 : 14} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -171,7 +191,7 @@ export default function LaporanPage({ transactions }) {
                   stroke="none"
                 >
                   {expenseBreakdown.map((_, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                    <Cell key={i} fill={colors.pie[i % colors.pie.length]} />
                   ))}
                 </Pie>
               </PieChart>
@@ -180,7 +200,7 @@ export default function LaporanPage({ transactions }) {
               {expenseBreakdown.slice(0, 6).map((c, i) => (
                 <div key={c.category} className="flex items-center justify-between gap-2 text-xs">
                   <span className="flex min-w-0 items-center gap-1.5 text-ink">
-                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                    <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: colors.pie[i % colors.pie.length] }} />
                     <span className="truncate">{c.category}</span>
                   </span>
                   <span className="font-mono-num shrink-0 text-muted">
