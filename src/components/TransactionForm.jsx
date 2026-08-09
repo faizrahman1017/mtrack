@@ -71,7 +71,7 @@ export default function TransactionForm({ initial, presetDate, onSubmit, onCance
         category: form.category === 'Custom' ? form.customCategory.trim() : form.category,
         text: form.text.trim(),
         amount: amountNum,
-        payment_method: type === 'expense' ? form.paymentMethod : null,
+        payment_method: form.paymentMethod,
       })
       if (!initial) {
         setForm(emptyState(type, presetDate))
@@ -169,20 +169,20 @@ export default function TransactionForm({ initial, presetDate, onSubmit, onCance
         />
       </div>
 
-      {type === 'expense' && (
-        <div>
-          <label className="mb-1.5 block text-sm font-medium text-ink">Metode pembayaran</label>
-          <select
-            value={form.paymentMethod}
-            onChange={handleChange('paymentMethod')}
-            className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent-soft"
-          >
-            {PAYMENT_METHODS.map((m) => (
-              <option key={m} value={m}>{m}</option>
-            ))}
-          </select>
-        </div>
-      )}
+      <div>
+        <label className="mb-1.5 block text-sm font-medium text-ink">
+          {type === 'expense' ? 'Dibayar pakai' : 'Masuk ke'}
+        </label>
+        <select
+          value={form.paymentMethod}
+          onChange={handleChange('paymentMethod')}
+          className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent-soft"
+        >
+          {PAYMENT_METHODS.map((m) => (
+            <option key={m} value={m}>{m === 'Cash' ? 'Cash' : `${m} (Rekening)`}</option>
+          ))}
+        </select>
+      </div>
 
       {error && <p className="rounded-lg bg-expense-soft px-3 py-2 text-sm text-expense">{error}</p>}
 

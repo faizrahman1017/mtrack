@@ -1,21 +1,23 @@
 export const formatRupiah = (amount, { withSign = false } = {}) => {
-  const value = Math.abs(amount || 0)
+  const value = amount || 0
   const formatted = new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(value)
-  if (!withSign) return formatted
-  return amount < 0 ? `-${formatted}` : `+${formatted}`
+  }).format(Math.abs(value))
+  if (withSign) return value < 0 ? `-${formatted}` : `+${formatted}`
+  return value < 0 ? `-${formatted}` : formatted
 }
 
 export const formatCompactRupiah = (amount) => {
-  const value = Math.abs(amount || 0)
-  if (value >= 1_000_000_000) return `Rp${(value / 1_000_000_000).toFixed(1)}M`
-  if (value >= 1_000_000) return `Rp${(value / 1_000_000).toFixed(1)}jt`
-  if (value >= 1_000) return `Rp${(value / 1_000).toFixed(0)}rb`
-  return `Rp${value}`
+  const raw = amount || 0
+  const value = Math.abs(raw)
+  const sign = raw < 0 ? '-' : ''
+  if (value >= 1_000_000_000) return `${sign}Rp${(value / 1_000_000_000).toFixed(1)}M`
+  if (value >= 1_000_000) return `${sign}Rp${(value / 1_000_000).toFixed(1)}jt`
+  if (value >= 1_000) return `${sign}Rp${(value / 1_000).toFixed(0)}rb`
+  return `${sign}Rp${value}`
 }
 
 export const toDateKey = (date) => {

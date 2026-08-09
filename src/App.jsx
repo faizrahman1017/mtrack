@@ -9,14 +9,23 @@ import BalanceHeader from './components/BalanceHeader'
 import BottomNav from './components/BottomNav'
 import Modal from './components/Modal'
 import TransactionForm from './components/TransactionForm'
+import { ACCOUNT_GROUP } from './lib/categories'
 
 function AppShell({ user, signOut }) {
   const { transactions, loading, addTransaction, updateTransaction, deleteTransaction } = useTransactions(user.id)
   const [tab, setTab] = useState('catat')
   const [editingTx, setEditingTx] = useState(null)
 
-  const totalBalance = useMemo(() => {
-    return transactions.reduce((acc, t) => acc + (t.type === 'income' ? t.amount : -t.amount), 0)
+  const { totalBalance, cashBalance, rekeningBalance } = useMemo(() => {
+    let cash = 0
+    let rekening = 0
+    transactions.forEach((t) => {
+      const signed = t.type === 'income' ? t.amount : -t.amount
+      const group = ACCOUNT_GROUP[t.payment_method] || 'rekening'
+      if (group === 'cash') cash += signed
+      else rekening += signed
+    })
+    return { totalBalance: cash + rekening, cashBalance: cash, rekeningBalance: rekening }
   }, [transactions])
 
   const handleDelete = async (id) => {
@@ -25,7 +34,13 @@ function AppShell({ user, signOut }) {
 
   return (
     <div className="min-h-dvh bg-bg">
-      <BalanceHeader totalBalance={totalBalance} userEmail={user.email} onSignOut={signOut} />
+      <BalanceHeader
+        totalBalance={totalBalance}
+        cashBalance={cashBalance}
+        rekeningBalance={rekeningBalance}
+        userEmail={user.email}
+        onSignOut={signOut}
+      />
 
       {loading ? (
         <div className="flex items-center justify-center py-24 text-sm text-muted">Memuat data…</div>
