@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import Modal from '../components/Modal'
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
   PieChart, Pie, Cell,
@@ -7,8 +7,9 @@ import {
   getWeekRange, filterByRange, summarize, categoryBreakdown,
   weeklyDailySeries, monthlyDailySeries, yearlyMonthlySeries,
 } from '../lib/reportUtils'
-import { formatCompactRupiah, formatMonthYear, formatRupiah } from '../lib/format'
+import { formatCompactRupiah, formatMonthYear, formatRupiah, formatTime, toDateKey } from '../lib/format'
 import { useTheme } from '../hooks/useTheme'
+import { useState, useMemo } from 'react'
 
 const MODES = [
   { key: 'week', label: 'Mingguan' },
@@ -53,6 +54,7 @@ export default function LaporanPage({ transactions }) {
   const { theme } = useTheme()
   const colors = CHART_PALETTE[theme]
   const [mode, setMode] = useState('week')
+  const [selectedCategory, setSelectedCategory] = useState(null)
   const [anchor, setAnchor] = useState(new Date())
 
   const periodLabel = useMemo(() => {
@@ -198,7 +200,7 @@ export default function LaporanPage({ transactions }) {
             </ResponsiveContainer>
             <div className="flex-1 space-y-2">
               {expenseBreakdown.slice(0, 6).map((c, i) => (
-                <div key={c.category} className="flex items-center justify-between gap-2 text-xs">
+                <div key={c.category} className="flex items-center justify-between gap-2 text-xs cursor-pointer hover:bg-surface" onClick={() => setSelectedCategory(c.category)}>
                   <span className="flex min-w-0 items-center gap-1.5 text-ink">
                     <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: colors.pie[i % colors.pie.length] }} />
                     <span className="truncate">{c.category}</span>
@@ -226,8 +228,33 @@ export default function LaporanPage({ transactions }) {
               </div>
             ))
           )}
-        </div>
+        {selectedCategory && (
+          <Modal title={selectedCategory} onClose={() => setSelectedCategory(null)}>
+            <div className="max-h-[70vh] overflow-y-auto">
+              {periodTx.filter((tx) => tx.category === selectedCategory).length === 0 ? (
+                <p className="py-4 text-center text-sm text-muted">Tidak ada transaksi untuk kategori ini.</p>
+              ) : (
+                periodTx
+                  .filter((tx) => tx.category === selectedCategory)
+                  .map((tx) => (
+                    <div key={tx.id} className="flex items-center justify-between py-2 border-b border-border">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-ink">{tx.text}</span>
+                        <span className="text-xs text-muted">
+                          {formatTime(tx.datetime)}{tx.payment_method ? ` • ${tx.payment_method}` : ''}
+                        </span>
+                      </div>
+                      <span className={`font-mono-num ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
+                        {tx.type === 'income' ? '+' : '-'} {formatRupiah(tx.amount)}
+                      </span>
+                    </div>
+                  ))
+              )}
+            </div>
+          </Modal>
+        )}
       </div>
     </div>
   )
 }
+
