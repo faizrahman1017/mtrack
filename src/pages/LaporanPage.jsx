@@ -106,6 +106,31 @@ export default function LaporanPage({ transactions }) {
 
   return (
     <div className="mx-auto max-w-md px-5 pb-28 pt-5">
+        {selectedCategory && (
+          <Modal title={selectedCategory} onClose={() => setSelectedCategory(null)}>
+            <div className="max-h-[70vh] overflow-y-auto">
+              {periodTx.filter((tx) => tx.category === selectedCategory).length === 0 ? (
+                <p className="py-4 text-center text-sm text-muted">Tidak ada transaksi untuk kategori ini.</p>
+              ) : (
+                periodTx
+                  .filter((tx) => tx.category === selectedCategory)
+                  .map((tx) => (
+                    <div key={tx.id} className="flex items-center justify-between py-2 border-b border-border">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-ink">{tx.text}</span>
+                        <span className="text-xs text-muted">
+                          {formatTime(tx.datetime)}{tx.payment_method ? ` • ${tx.payment_method}` : ''}
+                        </span>
+                      </div>
+                      <span className={`font-mono-num ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
+                        {tx.type === 'income' ? '+' : '-'} {formatRupiah(tx.amount)}
+                      </span>
+                    </div>
+                  ))
+              )}
+            </div>
+          </Modal>
+        )}
       <h1 className="font-display mb-5 text-2xl text-ink">Laporan</h1>
 
       <div className="mb-5 flex rounded-xl border border-border p-1">
@@ -228,31 +253,6 @@ export default function LaporanPage({ transactions }) {
               </div>
             ))
           )}
-        {selectedCategory && (
-          <Modal title={selectedCategory} onClose={() => setSelectedCategory(null)}>
-            <div className="max-h-[70vh] overflow-y-auto">
-              {periodTx.filter((tx) => tx.category === selectedCategory).length === 0 ? (
-                <p className="py-4 text-center text-sm text-muted">Tidak ada transaksi untuk kategori ini.</p>
-              ) : (
-                periodTx
-                  .filter((tx) => tx.category === selectedCategory)
-                  .map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between py-2 border-b border-border">
-                      <div className="flex flex-col">
-                        <span className="font-medium text-ink">{tx.text}</span>
-                        <span className="text-xs text-muted">
-                          {formatTime(tx.datetime)}{tx.payment_method ? ` • ${tx.payment_method}` : ''}
-                        </span>
-                      </div>
-                      <span className={`font-mono-num ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
-                        {tx.type === 'income' ? '+' : '-'} {formatRupiah(tx.amount)}
-                      </span>
-                    </div>
-                  ))
-              )}
-            </div>
-          </Modal>
-        )}
       </div>
     </div>
   )
