@@ -9,6 +9,8 @@ export const CATEGORIES = {
     'Dana Darurat',
     'Investasi',
     'Tabungan',
+    'Transfer ke Cash',
+    'Transfer ke e-Money',
     'Pulsa & Paket Data',
     'Laundry',
     'Jajan',
@@ -25,7 +27,7 @@ export const CATEGORIES = {
   ],
 }
 
-export const PAYMENT_METHODS = ['Cash', 'QRIS', 'Transfer', 'Kartu']
+export const PAYMENT_METHODS = ['Cash', 'E-Money', 'QRIS', 'Transfer', 'Kartu']
 
 export const CUSTOM_CATEGORY_LABEL = 'Custom'
 
@@ -33,6 +35,7 @@ export const CUSTOM_CATEGORY_LABEL = 'Custom'
 // Cash = uang fisik di tangan, selain itu (QRIS/Transfer/Kartu) = saldo di rekening/bank
 export const ACCOUNT_GROUP = {
   Cash: 'cash',
+  'E-Money': 'emoney',
   QRIS: 'rekening',
   Transfer: 'rekening',
   Kartu: 'rekening',

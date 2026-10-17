@@ -57,7 +57,7 @@ export default function TransactionForm({ initial, presetDate, onSubmit, onCance
       setError('Isi nama kategori custom-nya.')
       return
     }
-    const amountNum = Number(form.amount)
+    const amountNum = Number(form.amount.replace(/\./g, ''))
     if (!(amountNum > 0)) {
       setError('Jumlah harus lebih dari 0.')
       return
@@ -158,12 +158,14 @@ export default function TransactionForm({ initial, presetDate, onSubmit, onCance
       <div>
         <label className="mb-1.5 block text-sm font-medium text-ink">Jumlah (Rp)</label>
         <input
-          type="number"
+          type="text"
           required
-          min="1"
-          inputMode="numeric"
-          value={form.amount}
-          onChange={handleChange('amount')}
+                              value={form.amount}
+          onChange={(e) => {
+                const digits = e.target.value.replace(/\D/g, '')
+                const formatted = digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+                setForm((f) => ({ ...f, amount: formatted }))
+              }}
           placeholder="50000"
           className="font-mono-num w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent-soft"
         />
@@ -179,7 +181,7 @@ export default function TransactionForm({ initial, presetDate, onSubmit, onCance
           className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm text-ink outline-none focus:border-accent focus:ring-2 focus:ring-accent-soft"
         >
           {PAYMENT_METHODS.map((m) => (
-            <option key={m} value={m}>{m === 'Cash' ? 'Cash' : `${m} (Rekening)`}</option>
+            <option key={m} value={m}>{m === 'Cash' ? 'Cash' : m === 'E-Money' ? 'E-Money' : `${m} (Rekening)`}</option>
           ))}
         </select>
       </div>

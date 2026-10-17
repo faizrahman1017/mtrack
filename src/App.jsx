@@ -16,16 +16,18 @@ function AppShell({ user, signOut }) {
   const [tab, setTab] = useState('catat')
   const [editingTx, setEditingTx] = useState(null)
 
-  const { totalBalance, cashBalance, rekeningBalance } = useMemo(() => {
+  const { totalBalance, cashBalance, rekeningBalance, emoneyBalance } = useMemo(() => {
     let cash = 0
     let rekening = 0
+    let emoney = 0
     transactions.forEach((t) => {
       const signed = t.type === 'income' ? t.amount : -t.amount
       const group = ACCOUNT_GROUP[t.payment_method] || 'rekening'
       if (group === 'cash') cash += signed
+      else if (group === 'emoney') emoney += signed
       else rekening += signed
     })
-    return { totalBalance: cash + rekening, cashBalance: cash, rekeningBalance: rekening }
+    return { totalBalance: cash + rekening + emoney, cashBalance: cash, rekeningBalance: rekening, emoneyBalance: emoney }
   }, [transactions])
 
   const handleDelete = async (id) => {

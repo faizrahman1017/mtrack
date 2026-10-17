@@ -1,7 +1,7 @@
 import { formatRupiah } from '../lib/format'
 import { useTheme } from '../hooks/useTheme'
 
-export default function BalanceHeader({ totalBalance, cashBalance, rekeningBalance, userEmail, onSignOut }) {
+export default function BalanceHeader({ totalBalance, cashBalance, rekeningBalance, emoneyBalance, userEmail, onSignOut }) {
   const { theme, toggleTheme } = useTheme()
 
   return (
@@ -13,7 +13,8 @@ export default function BalanceHeader({ totalBalance, cashBalance, rekeningBalan
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <path d="M4 16 L10 8 L14 12 L20 5" stroke="#DE9F4E" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </div>
+
+                </div>
             <span className="font-display text-lg text-ink">M-Track</span>
           </div>
           <div className="flex items-center gap-1">
@@ -46,7 +47,7 @@ export default function BalanceHeader({ totalBalance, cashBalance, rekeningBalan
         <p className="font-mono-num font-display mt-0.5 text-[28px] leading-tight text-ink">
           {formatRupiah(totalBalance)}
         </p>
-        {(cashBalance !== undefined && rekeningBalance !== undefined) && (
+        {(cashBalance !== undefined && rekeningBalance !== undefined && emoneyBalance !== undefined) && (
           <div className="mt-2 flex gap-4 text-xs">
             <span className="flex items-center gap-1.5">
               <span className="h-1.5 w-1.5 rounded-full bg-gold" />
@@ -57,6 +58,11 @@ export default function BalanceHeader({ totalBalance, cashBalance, rekeningBalan
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               <span className="text-muted">Rekening</span>
               <span className="font-mono-num font-medium text-ink">{formatRupiah(rekeningBalance)}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-income" />
+              <span className="text-muted">e-Money</span>
+              <span className="font-mono-num font-medium text-ink">{formatRupiah(emoneyBalance)}</span>
             </span>
           </div>
         )}
