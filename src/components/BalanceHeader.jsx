@@ -1,6 +1,20 @@
 import { formatRupiah } from '../lib/format'
 import { useTheme } from '../hooks/useTheme'
 
+function BalanceItem({ dot, label, value }) {
+  return (
+    <div className="flex shrink-0 items-start gap-1.5">
+      <span className={`mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />
+      <div className="leading-tight">
+        <p className="whitespace-nowrap text-[11px] text-muted">{label}</p>
+        <p className="font-mono-num whitespace-nowrap text-[13px] font-medium text-ink">
+          {formatRupiah(value)}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export default function BalanceHeader({ totalBalance, cashBalance, rekeningBalance, emoneyBalance, userEmail, onSignOut }) {
   const { theme, toggleTheme } = useTheme()
 
@@ -48,22 +62,10 @@ export default function BalanceHeader({ totalBalance, cashBalance, rekeningBalan
           {formatRupiah(totalBalance)}
         </p>
         {(cashBalance !== undefined && rekeningBalance !== undefined && emoneyBalance !== undefined) && (
-          <div className="mt-2 flex gap-4 text-xs">
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-              <span className="text-muted">Cash</span>
-              <span className="font-mono-num font-medium text-ink">{formatRupiah(cashBalance)}</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-              <span className="text-muted">Rekening</span>
-              <span className="font-mono-num font-medium text-ink">{formatRupiah(rekeningBalance)}</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-income" />
-              <span className="text-muted">e-Money</span>
-              <span className="font-mono-num font-medium text-ink">{formatRupiah(emoneyBalance)}</span>
-            </span>
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2.5">
+            <BalanceItem dot="bg-gold" label="Cash" value={cashBalance} />
+            <BalanceItem dot="bg-accent" label="Rekening" value={rekeningBalance} />
+            <BalanceItem dot="bg-sky-400" label="e-Money" value={emoneyBalance} />
           </div>
         )}
       </div>

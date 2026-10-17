@@ -7,7 +7,7 @@ import {
   getWeekRange, filterByRange, summarize, categoryBreakdown,
   weeklyDailySeries, monthlyDailySeries, yearlyMonthlySeries,
 } from '../lib/reportUtils'
-import { formatCompactRupiah, formatMonthYear, formatRupiah, formatTime, toDateKey } from '../lib/format'
+import { formatCompactRupiah, formatMonthYear, formatRupiah, formatTime, toDateKey, formatDateShort } from '../lib/format'
 import { useTheme } from '../hooks/useTheme'
 import { useState, useMemo } from 'react'
 
@@ -106,31 +106,31 @@ export default function LaporanPage({ transactions }) {
 
   return (
     <div className="mx-auto max-w-md px-5 pb-28 pt-5">
-        {selectedCategory && (
-          <Modal title={selectedCategory} onClose={() => setSelectedCategory(null)}>
-            <div className="max-h-[70vh] overflow-y-auto">
-              {periodTx.filter((tx) => tx.category === selectedCategory).length === 0 ? (
-                <p className="py-4 text-center text-sm text-muted">Tidak ada transaksi untuk kategori ini.</p>
-              ) : (
-                periodTx
-                  .filter((tx) => tx.category === selectedCategory)
-                  .map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between py-2 border-b border-border">
-                      <div className="flex flex-col">
-                        <span className="font-medium text-ink">{tx.text}</span>
-                        <span className="text-xs text-muted">
-                          {formatTime(tx.datetime)}{tx.payment_method ? ` • ${tx.payment_method}` : ''}
-                        </span>
-                      </div>
-                      <span className={`font-mono-num ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
-                        {tx.type === 'income' ? '+' : '-'} {formatRupiah(tx.amount)}
+      {selectedCategory && (
+        <Modal title={selectedCategory} onClose={() => setSelectedCategory(null)}>
+          <div className="max-h-[70vh] overflow-y-auto">
+            {periodTx.filter((tx) => tx.category === selectedCategory).length === 0 ? (
+              <p className="py-4 text-center text-sm text-muted">Tidak ada transaksi untuk kategori ini.</p>
+            ) : (
+              periodTx
+                .filter((tx) => tx.category === selectedCategory)
+                .map((tx) => (
+                  <div key={tx.id} className="flex items-center justify-between py-2 border-b border-border">
+                    <div className="flex flex-col">
+                      <span className="font-medium text-ink">{tx.text}</span>
+                      <span className="text-xs text-muted">
+                        {formatDateShort(toDateKey(tx.datetime))} {formatTime(tx.datetime)}{tx.payment_method ? ` • ${tx.payment_method}` : ''}
                       </span>
                     </div>
-                  ))
-              )}
-            </div>
-          </Modal>
-        )}
+                    <span className={`font-mono-num ${tx.type === 'income' ? 'text-income' : 'text-expense'}`}>
+                      {tx.type === 'income' ? '+' : '-'} {formatRupiah(tx.amount)}
+                    </span>
+                  </div>
+                ))
+            )}
+          </div>
+        </Modal>
+      )}
       <h1 className="font-display mb-5 text-2xl text-ink">Laporan</h1>
 
       <div className="mb-5 flex rounded-xl border border-border p-1">
@@ -138,9 +138,7 @@ export default function LaporanPage({ transactions }) {
           <button
             key={m.key}
             onClick={() => setMode(m.key)}
-            className={`flex-1 rounded-lg py-2 text-sm font-semibold transition ${
-              mode === m.key ? 'bg-accent text-white' : 'text-muted'
-            }`}
+            className={`flex-1 rounded-lg py-2 text-sm font-semibold transition ${mode === m.key ? 'bg-accent text-white' : 'text-muted'}`}
           >
             {m.label}
           </button>
@@ -179,20 +177,8 @@ export default function LaporanPage({ transactions }) {
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={series} margin={chartMargin} barGap={2}>
             <CartesianGrid vertical={false} stroke={colors.grid} />
-            <XAxis
-              dataKey="label"
-              tick={{ fontSize: 10, fill: colors.tick }}
-              axisLine={{ stroke: colors.grid }}
-              tickLine={false}
-              interval={mode === 'month' ? 4 : 0}
-            />
-            <YAxis
-              tick={{ fontSize: 10, fill: colors.tick }}
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={formatCompactRupiah}
-              width={44}
-            />
+            <XAxis dataKey="label" tick={{ fontSize: 10, fill: colors.tick }} axisLine={{ stroke: colors.grid }} tickLine={false} interval={mode === 'month' ? 4 : 0} />
+            <YAxis tick={{ fontSize: 10, fill: colors.tick }} axisLine={false} tickLine={false} tickFormatter={formatCompactRupiah} width={44} />
             <Tooltip content={<ChartTooltip />} cursor={{ fill: colors.cursor }} />
             <Bar dataKey="income" name="Pemasukan" fill={colors.income} radius={[3, 3, 0, 0]} maxBarSize={mode === 'month' ? 6 : 14} />
             <Bar dataKey="expense" name="Pengeluaran" fill={colors.expense} radius={[3, 3, 0, 0]} maxBarSize={mode === 'month' ? 6 : 14} />
@@ -208,15 +194,7 @@ export default function LaporanPage({ transactions }) {
           <div className="flex items-center gap-4">
             <ResponsiveContainer width={120} height={120}>
               <PieChart>
-                <Pie
-                  data={expenseBreakdown}
-                  dataKey="amount"
-                  nameKey="category"
-                  innerRadius={32}
-                  outerRadius={58}
-                  paddingAngle={2}
-                  stroke="none"
-                >
+                <Pie data={expenseBreakdown} dataKey="amount" nameKey="category" innerRadius={32} outerRadius={58} paddingAngle={2} stroke="none">
                   {expenseBreakdown.map((_, i) => (
                     <Cell key={i} fill={colors.pie[i % colors.pie.length]} />
                   ))}
@@ -253,8 +231,8 @@ export default function LaporanPage({ transactions }) {
               </div>
             ))
           )}
+        </div>
       </div>
     </div>
   )
 }
-

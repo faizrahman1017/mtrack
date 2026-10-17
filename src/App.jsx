@@ -40,6 +40,7 @@ function AppShell({ user, signOut }) {
         totalBalance={totalBalance}
         cashBalance={cashBalance}
         rekeningBalance={rekeningBalance}
+        emoneyBalance={emoneyBalance}
         userEmail={user.email}
         onSignOut={signOut}
       />
